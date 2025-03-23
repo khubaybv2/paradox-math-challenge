@@ -1,29 +1,53 @@
-const MathGame = {
+const Game = {
     config: {
-        levelsPerMode: 10,
-        questionsPerLevel: 10,
-        baseTime: 300 // 5 minutes in seconds
+        totalLevels: 10,
+        questionsPerLevel: 5,
+        baseScore: 10
     },
-
+    
     state: {
-        currentUser: "",
-        currentMode: "",
+        currentUser: '',
+        currentMode: '',
         currentLevel: 1,
-        score: 100,
-        timeLeft: 0,
-        timerId: null,
-        questions: [],
-        currentQuestion: null,
+        score: 0,
         correctAnswers: 0,
         wrongAnswers: 0
     },
 
-    // প্রশ্ন জেনারেটর
-    generateQuestions(mode, level) {
+    questions: {
+        easy: [],
+        medium: [],
+        hard: []
+    },
+
+    init() {
+        this.generateAllQuestions();
+        this.bindEvents();
+    },
+
+    bindEvents() {
+        document.querySelectorAll('.mode-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                this.state.currentMode = e.currentTarget.dataset.mode;
+                this.showGameInterface();
+            });
+        });
+    },
+
+    generateAllQuestions() {
+        // Generate questions for all modes and levels
+        for(let level=1; level<=this.config.totalLevels; level++) {
+            this.questions.easy.push(...this.createQuestions('easy', level));
+            this.questions.medium.push(...this.createQuestions('medium', level));
+            this.questions.hard.push(...this.createQuestions('hard', level));
+        }
+    },
+
+    createQuestions(mode, level) {
         const questions = [];
         const difficulty = level * 5;
         
-        for(let i = 0; i < this.config.questionsPerLevel; i++) {
+        for(let i=0; i<this.config.questionsPerLevel; i++) {
             let question = {};
             const a = Math.floor(Math.random() * difficulty) + 1;
             const b = Math.floor(Math.random() * difficulty) + 1;
@@ -32,7 +56,7 @@ const MathGame = {
                 case 'easy':
                     question = this.createBasicQuestion(a, b);
                     break;
-                case 'standard':
+                case 'medium':
                     question = this.createIntermediateQuestion(a, b);
                     break;
                 case 'hard':
@@ -47,128 +71,116 @@ const MathGame = {
     createBasicQuestion(a, b) {
         const ops = ['+', '-'];
         const op = ops[Math.floor(Math.random() * ops.length)];
+        const answer = eval(`${a}${op}${b}`);
+        const options = this.generateOptions(answer, 10);
+        
         return {
-            question: `${this.toBengali(a)} ${op} ${this.toBengali(b)} = ?`,
-            answer: eval(`${a}${op}${b}`)
+            question: `${a} ${op} ${b} = ?`,
+            answer: answer,
+            options: options
         };
     },
 
-    createIntermediateQuestion(a, b) {
-        const ops = ['×', '÷'];
-        const op = ops[Math.floor(Math.random() * ops.length)];
-        let answer;
-        
-        if(op === '×') {
-            answer = a * b;
-        } else {
-            a = a * b; // Ensure divisible
-            answer = a / b;
+    generateOptions(correctAnswer, range) {
+        const options = [correctAnswer];
+        while(options.length < 4) {
+            const randomValue = correctAnswer + Math.floor(Math.random() * range) - Math.floor(range/2);
+            if(!options.includes(randomValue)) options.push(randomValue);
         }
+        return this.shuffleArray(options);
+    },
+
+    shuffleArray(array) {
+        return array.sort(() => Math.random() - 0.5);
+    },
+
+    showGameInterface() {
+        document.getElementById('userSection').classList.add('hidden');
+        document.getElementById('modeSection').classList.add('hidden');
+        document.getElementById('gameSection').classList.remove('hidden');
+        this.loadQuestion();
+    },
+
+    loadQuestion() {
+        const currentQuestions = this.questions[this.state.currentMode];
+        const currentQuestion = currentQuestions[(this.state.currentLevel-1)*this.config.questionsPerLevel];
         
-        return {
-            question: `${this.toBengali(a)} ${op} ${this.toBengali(b)} = ?`,
-            answer: answer
-        };
+        document.getElementById('questionText').textContent = currentQuestion.question;
+        this.displayOptions(currentQuestion.options, currentQuestion.answer);
     },
 
-    createAdvancedQuestion(a, b) {
-        const types = ['algebra', 'exponent'];
-        const type = types[Math.floor(Math.random() * types.length)];
+    displayOptions(options, correctAnswer) {
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
         
-        if(type === 'algebra') {
-            const result = a + b;
-            return {
-                question: `${this.toBengali(a)} + x = ${this.toBengali(result)}`,
-                answer: b
-            };
-        } else {
-            return {
-                question: `${this.toBengali(a)}² + ${this.toBengali(b)} = ?`,
-                answer: Math.pow(a, 2) + b
-            };
-        }
+        options.forEach(option => {
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.textContent = option;
+            button.onclick = () => this.checkAnswer(option, correctAnswer);
+            optionsContainer.appendChild(button);
+        });
     },
 
-    // গেম কন্ট্রোল
-    startGame(mode) {
-        this.state.currentMode = mode;
-        this.state.questions = this.generateQuestions(mode, this.state.currentLevel);
-        this.state.timeLeft = this.config.baseTime;
-        this.updateDisplay();
-        this.startTimer();
-        this.showNextQuestion();
-    },
-
-    startTimer() {
-        this.state.timerId = setInterval(() => {
-            this.state.timeLeft--;
-            this.updateTimerDisplay();
-            
-            if(this.state.timeLeft <= 0) {
-                this.endGame();
+    checkAnswer(selected, correct) {
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => {
+            if(parseInt(btn.textContent) === correct) {
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('wrong');
             }
-        }, 1000);
-    },
+            btn.disabled = true;
+        });
 
-    checkAnswer() {
-        const userAnswer = this.parseBengali(document.getElementById('answerInput').value);
-        const correctAnswer = this.state.currentQuestion.answer;
-        
-        if(parseFloat(userAnswer) === parseFloat(correctAnswer)) {
-            this.handleCorrectAnswer();
+        if(selected === correct) {
+            this.state.score += this.config.baseScore;
+            this.state.correctAnswers++;
         } else {
-            this.handleWrongAnswer();
+            this.state.wrongAnswers++;
         }
-        
-        if(this.state.questions.length > 0) {
-            this.showNextQuestion();
-        } else {
+
+        setTimeout(() => {
             this.showResults();
+        }, 1500);
+    },
+
+    showResults() {
+        document.getElementById('correctAnswers').textContent = this.state.correctAnswers;
+        document.getElementById('wrongAnswers').textContent = this.state.wrongAnswers;
+        document.getElementById('totalScore').textContent = this.state.score;
+        document.getElementById('resultSection').classList.remove('hidden');
+    },
+
+    nextLevel() {
+        if(this.state.currentLevel < this.config.totalLevels) {
+            this.state.currentLevel++;
+            this.loadQuestion();
+            document.getElementById('resultSection').classList.add('hidden');
         }
     },
 
-    // হেল্পার ফাংশন
-    toBengali(number) {
-        return number.toString().replace(/\d/g, m => '০১২৩৪৫৬৭৮৯'[m]);
-    },
-
-    parseBengali(input) {
-        return parseFloat(input.replace(/[০-৯]/g, m => '০১২৩৪৫৬৭৮৯'.indexOf(m)));
-    },
-
-    convertToBengali(input) {
-        input.value = input.value.replace(/\d/g, m => this.toBengali(m));
-    },
-
-    // UI আপডেট ফাংশন
-    updateDisplay() {
-        document.getElementById('currentLevel').textContent = 
-            `লেভেল ${this.toBengali(this.state.currentLevel)}`;
-        document.getElementById('gameProgress').value = this.state.currentLevel;
-        document.getElementById('score').textContent = 
-            `স্কোর: ${this.toBengali(this.state.score)}`;
-    },
-
-    updateTimerDisplay() {
-        const minutes = Math.floor(this.state.timeLeft / 60);
-        const seconds = this.state.timeLeft % 60;
-        document.getElementById('timer').textContent = 
-            `${this.toBengali(minutes)}:${this.toBengali(seconds.toString().padStart(2, '0'))}`;
+    restartGame() {
+        this.state.currentLevel = 1;
+        this.state.score = 0;
+        this.state.correctAnswers = 0;
+        this.state.wrongAnswers = 0;
+        this.showGameInterface();
     }
 };
 
 // Initialize Game
-document.addEventListener('DOMContentLoaded', () => {
-    // ইভেন্ট লিসেনার যোগ করুন
-    window.handleUserStart = () => {
-        const username = document.getElementById('userName').value.trim();
-        if(username) {
-            MathGame.state.currentUser = username;
-            document.getElementById('welcomeMsg').textContent = 
-                `স্বাগতম, ${username}! মোড নির্বাচন করুন`;
-        }
-    };
-    
-    window.startGame = (mode) => MathGame.startGame(mode);
-    window.checkAnswer = () => MathGame.checkAnswer();
-});
+window.startGameFlow = () => {
+    const username = document.getElementById('username').value;
+    if(username) {
+        Game.state.currentUser = username;
+        document.getElementById('userGreeting').textContent = `স্বাগতম, ${username}!`;
+        document.getElementById('userSection').classList.add('hidden');
+        document.getElementById('modeSection').classList.remove('hidden');
+    }
+};
+
+window.nextLevel = () => Game.nextLevel();
+window.restartGame = () => Game.restartGame();
+
+Game.init();
