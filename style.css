@@ -7,6 +7,7 @@
     --success-color: #00b894;
     --error-color: #d63031;
     --border-color: #dfe6e9;
+    --shadow-color: rgba(0,0,0,0.1);
 }
 
 [data-theme="dark"] {
@@ -16,14 +17,15 @@
     --text-color: #f8f9fa;
     --accent-color: #a66efa;
     --border-color: #636e72;
+    --shadow-color: rgba(255,255,255,0.1);
 }
 
-/* Base Styles */
+/* Base Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 body {
@@ -31,12 +33,9 @@ body {
     background: var(--primary-bg);
     color: var(--text-color);
     line-height: 1.6;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Theme Toggle */
@@ -55,7 +54,7 @@ body {
     border-radius: 15px;
     position: relative;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px var(--shadow-color);
 }
 
 .theme-ball {
@@ -73,30 +72,55 @@ body {
     transform: translateX(30px);
 }
 
-/* Game Components */
+/* Game Logo */
+.game-logo {
+    width: 250px;
+    height: auto;
+    margin: 0 auto 30px;
+    display: block;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: transform 0.3s ease;
+}
+
+.game-logo:hover {
+    transform: scale(1.05);
+}
+
+/* Container Layout */
+.container {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* User Section */
 .user-section {
     text-align: center;
     padding: 40px 20px;
+    max-width: 500px;
+    width: 100%;
 }
 
-.game-logo {
-    width: 150px;
-    margin-bottom: 30px;
-}
-
-.primary-btn {
-    background: var(--accent-color);
-    color: white;
-    padding: 12px 30px;
-    border: none;
+#userName {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 20px 0;
+    border: 2px solid var(--border-color);
     border-radius: 25px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: transform 0.2s;
+    font-size: 1rem;
+    background: var(--secondary-bg);
+    color: var(--text-color);
 }
 
-.primary-btn:hover {
-    transform: translateY(-2px);
+/* Level Selection */
+.level-section {
+    width: 100%;
+    max-width: 800px;
 }
 
 .mode-grid {
@@ -112,19 +136,77 @@ body {
     border-radius: 15px;
     cursor: pointer;
     border: 2px solid var(--border-color);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
 }
 
 .mode-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 5px 15px var(--shadow-color);
 }
 
+.mode-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+/* Game Interface */
+.game-section {
+    width: 100%;
+    max-width: 800px;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.progress-box {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.progress-bar {
+    height: 10px;
+    background: var(--border-color);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.status-box {
+    display: flex;
+    gap: 20px;
+}
+
+.timer, .score {
+    padding: 8px 20px;
+    border-radius: 20px;
+    background: var(--secondary-bg);
+    font-weight: bold;
+}
+
+/* Question Section */
 .question-container {
     background: var(--secondary-bg);
     padding: 30px;
     border-radius: 15px;
-    margin-top: 30px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px var(--shadow-color);
+}
+
+.question {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
 .answer-input {
@@ -135,12 +217,31 @@ body {
     border-radius: 8px;
     font-size: 1.2rem;
     text-align: center;
+    background: var(--primary-bg);
+    color: var(--text-color);
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background: var(--secondary-bg);
+    margin-top: auto;
+}
+
+.footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .container {
-        padding: 15px;
+    .game-logo {
+        width: 180px;
     }
 
     .mode-grid {
@@ -149,5 +250,15 @@ body {
 
     .question {
         font-size: 1.8rem;
+    }
+
+    .game-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .progress-box {
+        width: 100%;
+        margin-right: 0;
     }
 }
