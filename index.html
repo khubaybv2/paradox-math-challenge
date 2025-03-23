@@ -8,65 +8,99 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdsGdDUKlKShMX0pVo7oTEXXSquMnSDRmDVmsrEZDCcVB-5Gz5thINVic56m6TwvD4gF131qiECBezR4kECtlMbYa_2blO0yqT0NxPUQrAy_0aq7hmCHs5H3wr1rFnZYBk594QfEppnocFsjQ2UyCf6CxObvTpPzDk1WhuVADn9-9DLZBmNqyrBwsqsPg/s16000/for%20website.png" 
-             alt="প্যারাডক্স লোগো" class="logo">
-    </header>
-
-    <div class="container">
-        <!-- Username Input -->
-        <div id="userForm">
-            <input type="text" id="username" placeholder="আপনার নাম লিখুন">
-            <button class="btn" onclick="saveUsername()">জমা দিন</button>
-        </div>
-
-        <!-- Level Selection -->
-        <div id="levelSelect" class="hidden">
-            <h2 id="greeting"></h2>
-            <div class="mode-buttons">
-                <button class="btn easy" onclick="startGame('easy')">সহজ</button>
-                <button class="btn standard" onclick="startGame('standard')">মাধ্যমিক</button>
-                <button class="btn hard" onclick="startGame('hard')">কঠিন</button>
-            </div>
-        </div>
-
-        <!-- Game Panel -->
-        <div id="gamePanel" class="hidden">
-            <div class="stats">
-                <div class="timer-box">
-                    <span id="timer">০৫:০০</span>
-                    <span id="level">লেভেল: ১</span>
-                </div>
-                <div class="score-box">
-                    <span id="score">স্কোর: ১০০</span>
-                    <span id="lives">❤️ ❤️ ❤️</span>
-                </div>
-            </div>
-
-            <div id="question" class="question-box"></div>
-            
-            <div class="input-group">
-                <input type="text" 
-                       id="answer" 
-                       placeholder="উত্তর লিখুন (বাংলা সংখ্যা)"
-                       oninput="convertToBengali(this)">
-                <button class="btn submit-btn" onclick="checkAnswer()">জমা দিন</button>
-            </div>
-        </div>
-
-        <!-- Results Modal -->
-        <div id="resultModal" class="modal hidden">
-            <div class="modal-content">
-                <h2 id="resultTitle"></h2>
-                <div id="resultStats"></div>
-                <button class="btn next-level" onclick="nextLevel()">পরবর্তী লেভেল</button>
-                <button class="btn retry" onclick="retryLevel()">আবার চেষ্টা করুন</button>
-            </div>
-        </div>
+    <div class="theme-toggle">
+        <input type="checkbox" id="themeSwitch">
+        <label for="themeSwitch" class="theme-label">
+            <span class="theme-ball"></span>
+        </label>
     </div>
 
-    <footer>
-        <p>⚡ দ্বারা পরিচালিত <a href="https://www.khubaybhossain.com">খুবাইব হোসেন</a></p>
+    <main class="container">
+        <!-- User Section -->
+        <section class="user-section" id="userSection">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdsGdDUKlKShMX0pVo7oTEXXSquMnSDRmDVmsrEZDCcVB-5Gz5thINVic56m6TwvD4gF131qiECBezR4kECtlMbYa_2blO0yqT0NxPUQrAy_0aq7hmCHs5H3wr1rFnZYBk594QfEppnocFsjQ2UyCf6CxObvTpPzDk1WhuVADn9-9DLZBmNqyrBwsqsPg/s16000/for%20website.png" 
+                 alt="প্যারাডক্স লোগো" 
+                 class="game-logo">
+            <input type="text" id="userName" placeholder="আপনার নাম লিখুন">
+            <button class="primary-btn" onclick="handleUserStart()">শুরু করুন</button>
+        </section>
+
+        <!-- Level Select -->
+        <section class="level-section hidden" id="levelSection">
+            <h2 class="welcome-msg" id="welcomeMsg"></h2>
+            <div class="mode-grid">
+                <div class="mode-card" onclick="selectMode('easy')">
+                    <div class="mode-icon">🌱</div>
+                    <h3>সহজ</h3>
+                    <p>যোগ/বিয়োগ (১-৫০)</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('standard')">
+                    <div class="mode-icon">📘</div>
+                    <h3>মাধ্যমিক</h3>
+                    <p>গুণ/ভাগ (১-১০০)</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('hard')">
+                    <div class="mode-icon">🔥</div>
+                    <h3>কঠিন</h3>
+                    <p>বীজগণিত/সমীকরণ</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Game Interface -->
+        <section class="game-section hidden" id="gameSection">
+            <div class="game-header">
+                <div class="progress-box">
+                    <span class="level-text" id="levelText">লেভেল ১</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <div class="status-box">
+                    <div class="timer" id="timer">৫:০০</div>
+                    <div class="score" id="score">১০০</div>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <div class="question" id="question"></div>
+                <input type="text" 
+                       id="answerInput" 
+                       class="answer-input"
+                       placeholder="উত্তর লিখুন"
+                       oninput="convertToBengali(this)">
+                <button class="primary-btn" onclick="checkAnswer()">যাচাই করুন</button>
+            </div>
+        </section>
+
+        <!-- Results Modal -->
+        <div class="result-modal hidden" id="resultModal">
+            <div class="modal-content">
+                <h2 id="resultTitle"></h2>
+                <div class="result-stats">
+                    <div class="stat-item correct">
+                        <span>সঠিক উত্তর</span>
+                        <span id="correctCount">০</span>
+                    </div>
+                    <div class="stat-item wrong">
+                        <span>ভুল উত্তর</span>
+                        <span id="wrongCount">০</span>
+                    </div>
+                    <div class="stat-item score">
+                        <span>মোট স্কোর</span>
+                        <span id="finalScore">১০০</span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="outline-btn" onclick="retryLevel()">পুনরায় চেষ্টা</button>
+                    <button class="primary-btn" onclick="nextLevel()">পরবর্তী লেভেল</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>⚡ Powered by <a href="https://khubaybhossain.com" target="_blank">Khubayb Hossain</a></p>
     </footer>
 
     <script src="game.js"></script>
