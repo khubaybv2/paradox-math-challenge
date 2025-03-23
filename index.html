@@ -14,11 +14,20 @@
     </header>
 
     <div class="container">
+        <!-- Username Input -->
+        <div id="userForm">
+            <input type="text" id="username" placeholder="আপনার নাম লিখুন">
+            <button class="btn" onclick="saveUsername()">জমা দিন</button>
+        </div>
+
         <!-- Level Selection -->
-        <div class="level-select">
-            <button class="btn easy" onclick="startGame('easy')">সহজ</button>
-            <button class="btn standard" onclick="startGame('standard')">মাধ্যমিক</button>
-            <button class="btn hard" onclick="startGame('hard')">কঠিন</button>
+        <div id="levelSelect" class="hidden">
+            <h2 id="greeting"></h2>
+            <div class="mode-buttons">
+                <button class="btn easy" onclick="startGame('easy')">সহজ</button>
+                <button class="btn standard" onclick="startGame('standard')">মাধ্যমিক</button>
+                <button class="btn hard" onclick="startGame('hard')">কঠিন</button>
+            </div>
         </div>
 
         <!-- Game Panel -->
@@ -57,7 +66,7 @@
     </div>
 
     <footer>
-        <p>⚡ by <a href="https://www.khubaybhossain.com">Khubayb Hossain</a></p>
+        <p>⚡ দ্বারা পরিচালিত <a href="https://www.khubaybhossain.com">খুবাইব হোসেন</a></p>
     </footer>
 
     <script src="game.js"></script>
