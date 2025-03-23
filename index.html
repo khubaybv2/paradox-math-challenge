@@ -3,107 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>প্যারাডক্স গণিত মাস্টার ⚡</title>
+    <title>গণিত মাস্টার ⚡</title>
     <link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Theme Toggle -->
-    <div class="theme-toggle">
-        <input type="checkbox" id="themeSwitch">
-        <label for="themeSwitch" class="theme-label">
-            <span class="theme-ball"></span>
-        </label>
-    </div>
-
-    <main class="container">
+    <div class="game-container">
         <!-- User Section -->
-        <section class="user-section active" id="userSection">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdsGdDUKlKShMX0pVo7oTEXXSquMnSDRmDVmsrEZDCcVB-5Gz5thINVic56m6TwvD4gF131qiECBezR4kECtlMbYa_2blO0yqT0NxPUQrAy_0aq7hmCHs5H3wr1rFnZYBk594QfEppnocFsjQ2UyCf6CxObvTpPzDk1WhuVADn9-9DLZBmNqyrBwsqsPg/s16000/for%20website.png" 
-                 alt="গেম লোগো" 
-                 class="game-logo">
-            <div class="input-group">
-                <input type="text" id="userName" placeholder="আপনার নাম লিখুন" class="nes-input">
-                <button class="nes-btn is-primary" onclick="handleUserStart()">শুরু করুন</button>
-            </div>
-        </section>
+        <div class="auth-box" id="userSection">
+            <img src="your-logo-url.png" class="game-logo" alt="লোগো">
+            <input type="text" id="username" placeholder="আপনার নাম লিখুন">
+            <button onclick="startGameFlow()">শুরু করুন</button>
+        </div>
 
-        <!-- Level Select -->
-        <section class="level-section" id="levelSection">
-            <h2 class="welcome-msg" id="welcomeMsg"></h2>
-            <div class="mode-grid">
-                <div class="nes-container with-title">
-                    <p class="title">গেম মোড</p>
-                    <div class="mode-buttons">
-                        <button class="nes-btn is-success" onclick="startGame('easy')">সহজ</button>
-                        <button class="nes-btn is-warning" onclick="startGame('standard')">মাধ্যমিক</button>
-                        <button class="nes-btn is-error" onclick="startGame('hard')">কঠিন</button>
-                    </div>
+        <!-- Mode Selection -->
+        <div class="mode-box hidden" id="modeSection">
+            <h2><span id="userGreeting"></span></h2>
+            <div class="mode-options">
+                <div class="mode-card" data-mode="easy">
+                    <div class="mode-icon">➕</div>
+                    <h3>সহজ মোড</h3>
+                    <p>যোগ/বিয়োগ (১-৫০)</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- Game Interface -->
-        <section class="game-section" id="gameSection">
-            <div class="nes-container is-rounded">
-                <div class="game-header">
-                    <div class="level-info">
-                        <span class="nes-badge">
-                            <span class="is-primary" id="currentLevel">লেভেল ১</span>
-                        </span>
-                        <progress class="nes-progress is-primary" id="gameProgress" value="0" max="10"></progress>
-                    </div>
-                    <div class="status-info">
-                        <div class="nes-badge">
-                            <span class="is-warning" id="timer">05:00</span>
-                        </div>
-                        <div class="nes-badge">
-                            <span class="is-success" id="score">স্কোর: 100</span>
-                        </div>
-                    </div>
+                <div class="mode-card" data-mode="medium">
+                    <div class="mode-icon">✖️</div>
+                    <h3>মাধ্যমিক মোড</h3>
+                    <p>গুণ/ভাগ (১-১০০)</p>
                 </div>
-
-                <div class="question-box">
-                    <div class="nes-balloon from-left" id="questionText"></div>
-                </div>
-
-                <div class="input-box">
-                    <input type="text" 
-                           id="answerInput"
-                           class="nes-input"
-                           placeholder="উত্তর লিখুন"
-                           oninput="convertToBengali(this)">
-                    <button class="nes-btn is-primary" onclick="checkAnswer()">জমা দিন</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Results Modal -->
-        <div class="result-modal" id="resultModal">
-            <div class="nes-container is-rounded is-dark result-content">
-                <h2 id="resultTitle" class="result-title"></h2>
-                <div class="result-stats">
-                    <div class="nes-container is-rounded stat-item correct">
-                        <p>সঠিক উত্তর: <span id="correctCount">0</span></p>
-                    </div>
-                    <div class="nes-container is-rounded stat-item wrong">
-                        <p>ভুল উত্তর: <span id="wrongCount">0</span></p>
-                    </div>
-                    <div class="nes-container is-rounded stat-item score">
-                        <p>চূড়ান্ত স্কোর: <span id="finalScore">0</span></p>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button class="nes-btn" onclick="retryLevel()">আবার চেষ্টা করুন</button>
-                    <button class="nes-btn is-primary" onclick="nextLevel()">পরবর্তী লেভেল</button>
+                <div class="mode-card" data-mode="hard">
+                    <div class="mode-icon">📐</div>
+                    <h3>কঠিন মোড</h3>
+                    <p>বীজগণিত/সমীকরণ</p>
                 </div>
             </div>
         </div>
-    </main>
 
-    <footer class="footer">
-        <p>⚡ Powered by <a href="https://khubaybhossain.com" target="_blank">Khubayb Hossain</a></p>
-    </footer>
+        <!-- Game Interface -->
+        <div class="game-interface hidden" id="gameSection">
+            <div class="question-header">
+                <div class="score-board">
+                    <span>স্কোর: <span id="currentScore">0</span></span>
+                    <span>লেভেল: <span id="currentLevel">1</span>/10</span>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-card">
+                    <h2 id="questionText"></h2>
+                    <div class="options-grid" id="optionsContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="result-modal hidden" id="resultSection">
+            <div class="result-card">
+                <h2>ফলাফল</h2>
+                <div class="result-stats">
+                    <p>সঠিক উত্তর: <span id="correctAnswers">0</span></p>
+                    <p>ভুল উত্তর: <span id="wrongAnswers">0</span></p>
+                    <p>চূড়ান্ত স্কোর: <span id="totalScore">0</span></p>
+                </div>
+                <div class="action-buttons">
+                    <button onclick="nextLevel()">পরবর্তী</button>
+                    <button onclick="restartGame()">আবার খেলুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="game.js"></script>
 </body>
