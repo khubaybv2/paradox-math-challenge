@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>প্যারাডক্স গণিত চ্যালেঞ্জ ⚡</title>
+    <title>প্যারাডক্স গণিত মাস্টার ⚡</title>
     <link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Theme Toggle -->
     <div class="theme-toggle">
         <input type="checkbox" id="themeSwitch">
         <label for="themeSwitch" class="theme-label">
@@ -17,83 +18,84 @@
 
     <main class="container">
         <!-- User Section -->
-        <section class="user-section" id="userSection">
+        <section class="user-section active" id="userSection">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdsGdDUKlKShMX0pVo7oTEXXSquMnSDRmDVmsrEZDCcVB-5Gz5thINVic56m6TwvD4gF131qiECBezR4kECtlMbYa_2blO0yqT0NxPUQrAy_0aq7hmCHs5H3wr1rFnZYBk594QfEppnocFsjQ2UyCf6CxObvTpPzDk1WhuVADn9-9DLZBmNqyrBwsqsPg/s16000/for%20website.png" 
-                 alt="প্যারাডক্স লোগো" 
+                 alt="গেম লোগো" 
                  class="game-logo">
-            <input type="text" id="userName" placeholder="আপনার নাম লিখুন">
-            <button class="primary-btn" onclick="handleUserStart()">শুরু করুন</button>
+            <div class="input-group">
+                <input type="text" id="userName" placeholder="আপনার নাম লিখুন" class="nes-input">
+                <button class="nes-btn is-primary" onclick="handleUserStart()">শুরু করুন</button>
+            </div>
         </section>
 
         <!-- Level Select -->
-        <section class="level-section hidden" id="levelSection">
+        <section class="level-section" id="levelSection">
             <h2 class="welcome-msg" id="welcomeMsg"></h2>
             <div class="mode-grid">
-                <div class="mode-card" onclick="selectMode('easy')">
-                    <div class="mode-icon">🌱</div>
-                    <h3>সহজ</h3>
-                    <p>যোগ/বিয়োগ (১-৫০)</p>
-                </div>
-                <div class="mode-card" onclick="selectMode('standard')">
-                    <div class="mode-icon">📘</div>
-                    <h3>মাধ্যমিক</h3>
-                    <p>গুণ/ভাগ (১-১০০)</p>
-                </div>
-                <div class="mode-card" onclick="selectMode('hard')">
-                    <div class="mode-icon">🔥</div>
-                    <h3>কঠিন</h3>
-                    <p>বীজগণিত/সমীকরণ</p>
+                <div class="nes-container with-title">
+                    <p class="title">গেম মোড</p>
+                    <div class="mode-buttons">
+                        <button class="nes-btn is-success" onclick="startGame('easy')">সহজ</button>
+                        <button class="nes-btn is-warning" onclick="startGame('standard')">মাধ্যমিক</button>
+                        <button class="nes-btn is-error" onclick="startGame('hard')">কঠিন</button>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Game Interface -->
-        <section class="game-section hidden" id="gameSection">
-            <div class="game-header">
-                <div class="progress-box">
-                    <span class="level-text" id="levelText">লেভেল ১</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
+        <section class="game-section" id="gameSection">
+            <div class="nes-container is-rounded">
+                <div class="game-header">
+                    <div class="level-info">
+                        <span class="nes-badge">
+                            <span class="is-primary" id="currentLevel">লেভেল ১</span>
+                        </span>
+                        <progress class="nes-progress is-primary" id="gameProgress" value="0" max="10"></progress>
+                    </div>
+                    <div class="status-info">
+                        <div class="nes-badge">
+                            <span class="is-warning" id="timer">05:00</span>
+                        </div>
+                        <div class="nes-badge">
+                            <span class="is-success" id="score">স্কোর: 100</span>
+                        </div>
                     </div>
                 </div>
-                <div class="status-box">
-                    <div class="timer" id="timer">৫:০০</div>
-                    <div class="score" id="score">১০০</div>
-                </div>
-            </div>
 
-            <div class="question-container">
-                <div class="question" id="question"></div>
-                <input type="text" 
-                       id="answerInput" 
-                       class="answer-input"
-                       placeholder="উত্তর লিখুন"
-                       oninput="convertToBengali(this)">
-                <button class="primary-btn" onclick="checkAnswer()">যাচাই করুন</button>
+                <div class="question-box">
+                    <div class="nes-balloon from-left" id="questionText"></div>
+                </div>
+
+                <div class="input-box">
+                    <input type="text" 
+                           id="answerInput"
+                           class="nes-input"
+                           placeholder="উত্তর লিখুন"
+                           oninput="convertToBengali(this)">
+                    <button class="nes-btn is-primary" onclick="checkAnswer()">জমা দিন</button>
+                </div>
             </div>
         </section>
 
         <!-- Results Modal -->
-        <div class="result-modal hidden" id="resultModal">
-            <div class="modal-content">
-                <h2 id="resultTitle"></h2>
+        <div class="result-modal" id="resultModal">
+            <div class="nes-container is-rounded is-dark result-content">
+                <h2 id="resultTitle" class="result-title"></h2>
                 <div class="result-stats">
-                    <div class="stat-item correct">
-                        <span>সঠিক উত্তর</span>
-                        <span id="correctCount">০</span>
+                    <div class="nes-container is-rounded stat-item correct">
+                        <p>সঠিক উত্তর: <span id="correctCount">0</span></p>
                     </div>
-                    <div class="stat-item wrong">
-                        <span>ভুল উত্তর</span>
-                        <span id="wrongCount">০</span>
+                    <div class="nes-container is-rounded stat-item wrong">
+                        <p>ভুল উত্তর: <span id="wrongCount">0</span></p>
                     </div>
-                    <div class="stat-item score">
-                        <span>মোট স্কোর</span>
-                        <span id="finalScore">১০০</span>
+                    <div class="nes-container is-rounded stat-item score">
+                        <p>চূড়ান্ত স্কোর: <span id="finalScore">0</span></p>
                     </div>
                 </div>
                 <div class="modal-actions">
-                    <button class="outline-btn" onclick="retryLevel()">পুনরায় চেষ্টা</button>
-                    <button class="primary-btn" onclick="nextLevel()">পরবর্তী লেভেল</button>
+                    <button class="nes-btn" onclick="retryLevel()">আবার চেষ্টা করুন</button>
+                    <button class="nes-btn is-primary" onclick="nextLevel()">পরবর্তী লেভেল</button>
                 </div>
             </div>
         </div>
