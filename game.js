@@ -35,8 +35,7 @@ const Game = {
     },
 
     generateAllQuestions() {
-        // Generate questions for all modes and levels
-        for(let level=1; level<=this.config.totalLevels; level++) {
+        for (let level = 1; level <= this.config.totalLevels; level++) {
             this.questions.easy.push(...this.createQuestions('easy', level));
             this.questions.medium.push(...this.createQuestions('medium', level));
             this.questions.hard.push(...this.createQuestions('hard', level));
@@ -47,12 +46,12 @@ const Game = {
         const questions = [];
         const difficulty = level * 5;
         
-        for(let i=0; i<this.config.questionsPerLevel; i++) {
+        for (let i = 0; i < this.config.questionsPerLevel; i++) {
             let question = {};
             const a = Math.floor(Math.random() * difficulty) + 1;
             const b = Math.floor(Math.random() * difficulty) + 1;
 
-            switch(mode) {
+            switch (mode) {
                 case 'easy':
                     question = this.createBasicQuestion(a, b);
                     break;
@@ -83,9 +82,9 @@ const Game = {
 
     generateOptions(correctAnswer, range) {
         const options = [correctAnswer];
-        while(options.length < 4) {
-            const randomValue = correctAnswer + Math.floor(Math.random() * range) - Math.floor(range/2);
-            if(!options.includes(randomValue)) options.push(randomValue);
+        while (options.length < 4) {
+            const randomValue = correctAnswer + Math.floor(Math.random() * range) - Math.floor(range / 2);
+            if (!options.includes(randomValue)) options.push(randomValue);
         }
         return this.shuffleArray(options);
     },
@@ -103,7 +102,8 @@ const Game = {
 
     loadQuestion() {
         const currentQuestions = this.questions[this.state.currentMode];
-        const currentQuestion = currentQuestions[(this.state.currentLevel-1)*this.config.questionsPerLevel];
+        const levelIndex = (this.state.currentLevel - 1) * this.config.questionsPerLevel;
+        const currentQuestion = currentQuestions[levelIndex];
         
         document.getElementById('questionText').textContent = currentQuestion.question;
         this.displayOptions(currentQuestion.options, currentQuestion.answer);
@@ -125,7 +125,7 @@ const Game = {
     checkAnswer(selected, correct) {
         const buttons = document.querySelectorAll('.option-btn');
         buttons.forEach(btn => {
-            if(parseInt(btn.textContent) === correct) {
+            if (parseInt(btn.textContent) === correct) {
                 btn.classList.add('correct');
             } else {
                 btn.classList.add('wrong');
@@ -133,7 +133,7 @@ const Game = {
             btn.disabled = true;
         });
 
-        if(selected === correct) {
+        if (selected === correct) {
             this.state.score += this.config.baseScore;
             this.state.correctAnswers++;
         } else {
@@ -153,7 +153,7 @@ const Game = {
     },
 
     nextLevel() {
-        if(this.state.currentLevel < this.config.totalLevels) {
+        if (this.state.currentLevel < this.config.totalLevels) {
             this.state.currentLevel++;
             this.loadQuestion();
             document.getElementById('resultSection').classList.add('hidden');
@@ -172,7 +172,7 @@ const Game = {
 // Initialize Game
 window.startGameFlow = () => {
     const username = document.getElementById('username').value;
-    if(username) {
+    if (username) {
         Game.state.currentUser = username;
         document.getElementById('userGreeting').textContent = `স্বাগতম, ${username}!`;
         document.getElementById('userSection').classList.add('hidden');
