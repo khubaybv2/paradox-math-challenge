@@ -20,11 +20,47 @@ const Game = {
         hard: []
     },
 
+    // গেম ইনিশিয়ালাইজেশন
     init() {
+        this.loadProgress(); // সংরক্ষিত ডেটা লোড করুন
         this.generateAllQuestions();
         this.bindEvents();
+        this.updateUserGreeting();
     },
 
+    // LocalStorage থেকে ডেটা লোড
+    loadProgress() {
+        const savedData = localStorage.getItem('mathMasterProgress');
+        if (savedData) {
+            const parsedData = JSON.parse(savedData);
+            this.state = { ...this.state, ...parsedData };
+        }
+    },
+
+    // LocalStorage এ ডেটা সেভ
+    saveProgress() {
+        const dataToSave = {
+            currentUser: this.state.currentUser,
+            currentMode: this.state.currentMode,
+            currentLevel: this.state.currentLevel,
+            score: this.state.score,
+            correctAnswers: this.state.correctAnswers,
+            wrongAnswers: this.state.wrongAnswers
+        };
+        localStorage.setItem('mathMasterProgress', JSON.stringify(dataToSave));
+    },
+
+    // ব্যবহারকারীর নাম আপডেট
+    updateUserGreeting() {
+        if (this.state.currentUser) {
+            document.getElementById('userGreeting').textContent = 
+                `স্বাগতম, ${this.state.currentUser}!`;
+            document.getElementById('userSection').classList.add('hidden');
+            document.getElementById('modeSection').classList.remove('hidden');
+        }
+    },
+
+    // ইভেন্ট বাইন্ডিং
     bindEvents() {
         document.querySelectorAll('.mode-card').forEach(card => {
             card.addEventListener('click', (e) => {
@@ -34,14 +70,16 @@ const Game = {
         });
     },
 
+    // সমস্ত প্রশ্ন জেনারেট করুন
     generateAllQuestions() {
         for (let level = 1; level <= this.config.totalLevels; level++) {
-            this.questions.easy.push(...this.createQuestions('easy', level));
-            this.questions.medium.push(...this.createQuestions('medium', level));
-            this.questions.hard.push(...this.createQuestions('hard', level));
+            this.questions.easy = [...this.questions.easy, ...this.createQuestions('easy', level)];
+            this.questions.medium = [...this.questions.medium, ...this.createQuestions('medium', level)];
+            this.questions.hard = [...this.questions.hard, ...this.createQuestions('hard', level)];
         }
     },
 
+    // প্রশ্ন তৈরি করুন
     createQuestions(mode, level) {
         const questions = [];
         const difficulty = level * 5;
@@ -67,6 +105,7 @@ const Game = {
         return questions;
     },
 
+    // সহজ প্রশ্ন তৈরি করুন
     createBasicQuestion(a, b) {
         const ops = ['+', '-'];
         const op = ops[Math.floor(Math.random() * ops.length)];
@@ -80,6 +119,48 @@ const Game = {
         };
     },
 
+    // মাধ্যমিক প্রশ্ন তৈরি করুন
+    createIntermediateQuestion(a, b) {
+        const ops = ['×', '÷'];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        let answer;
+        
+        if (op === '×') {
+            answer = a * b;
+        } else {
+            a = a * b; // বিভাজ্য নিশ্চিত করুন
+            answer = a / b;
+        }
+        
+        return {
+            question: `${a} ${op} ${b} = ?`,
+            answer: answer,
+            options: this.generateOptions(answer, 15)
+        };
+    },
+
+    // কঠিন প্রশ্ন তৈরি করুন
+    createAdvancedQuestion(a, b) {
+        const types = ['algebra', 'exponent'];
+        const type = types[Math.floor(Math.random() * types.length)];
+        
+        if (type === 'algebra') {
+            const result = a + b;
+            return {
+                question: `${a} + x = ${result}`,
+                answer: b,
+                options: this.generateOptions(b, 20)
+            };
+        } else {
+            return {
+                question: `${a}² + ${b} = ?`,
+                answer: Math.pow(a, 2) + b,
+                options: this.generateOptions(Math.pow(a, 2) + b, 25)
+            };
+        }
+    },
+
+    // MCQ অপশন তৈরি করুন
     generateOptions(correctAnswer, range) {
         const options = [correctAnswer];
         while (options.length < 4) {
@@ -89,10 +170,12 @@ const Game = {
         return this.shuffleArray(options);
     },
 
+    // অ্যারে শাফল করুন
     shuffleArray(array) {
         return array.sort(() => Math.random() - 0.5);
     },
 
+    // গেম ইন্টারফেস দেখান
     showGameInterface() {
         document.getElementById('userSection').classList.add('hidden');
         document.getElementById('modeSection').classList.add('hidden');
@@ -100,15 +183,20 @@ const Game = {
         this.loadQuestion();
     },
 
+    // প্রশ্ন লোড করুন
     loadQuestion() {
         const currentQuestions = this.questions[this.state.currentMode];
         const levelIndex = (this.state.currentLevel - 1) * this.config.questionsPerLevel;
         const currentQuestion = currentQuestions[levelIndex];
         
         document.getElementById('questionText').textContent = currentQuestion.question;
+        document.getElementById('currentScore').textContent = this.state.score;
+        document.getElementById('currentLevel').textContent = this.state.currentLevel;
         this.displayOptions(currentQuestion.options, currentQuestion.answer);
+        this.saveProgress(); // অগ্রগতি সেভ করুন
     },
 
+    // MCQ অপশন দেখান
     displayOptions(options, correctAnswer) {
         const optionsContainer = document.getElementById('optionsContainer');
         optionsContainer.innerHTML = '';
@@ -122,6 +210,7 @@ const Game = {
         });
     },
 
+    // উত্তর চেক করুন
     checkAnswer(selected, correct) {
         const buttons = document.querySelectorAll('.option-btn');
         buttons.forEach(btn => {
@@ -139,12 +228,12 @@ const Game = {
         } else {
             this.state.wrongAnswers++;
         }
-
-        setTimeout(() => {
-            this.showResults();
-        }, 1500);
+        
+        this.saveProgress(); // পরিবর্তনগুলি সেভ করুন
+        setTimeout(() => this.showResults(), 1500);
     },
 
+    // ফলাফল দেখান
     showResults() {
         document.getElementById('correctAnswers').textContent = this.state.correctAnswers;
         document.getElementById('wrongAnswers').textContent = this.state.wrongAnswers;
@@ -152,31 +241,42 @@ const Game = {
         document.getElementById('resultSection').classList.remove('hidden');
     },
 
+    // পরবর্তী লেভেলে যান
     nextLevel() {
         if (this.state.currentLevel < this.config.totalLevels) {
             this.state.currentLevel++;
             this.loadQuestion();
             document.getElementById('resultSection').classList.add('hidden');
+            this.saveProgress();
+        } else {
+            alert('আপনি সমস্ত লেভেল সম্পন্ন করেছেন! 🎉');
+            this.restartGame();
         }
     },
 
+    // গেম রিসেট করুন
     restartGame() {
-        this.state.currentLevel = 1;
-        this.state.score = 0;
-        this.state.correctAnswers = 0;
-        this.state.wrongAnswers = 0;
+        localStorage.removeItem('mathMasterProgress');
+        this.state = {
+            currentUser: this.state.currentUser, // নাম রিটেইন করুন
+            currentMode: '',
+            currentLevel: 1,
+            score: 0,
+            correctAnswers: 0,
+            wrongAnswers: 0
+        };
+        this.saveProgress();
         this.showGameInterface();
     }
 };
 
-// Initialize Game
+// গেম শুরু করুন
 window.startGameFlow = () => {
-    const username = document.getElementById('username').value;
+    const username = document.getElementById('username').value.trim();
     if (username) {
         Game.state.currentUser = username;
-        document.getElementById('userGreeting').textContent = `স্বাগতম, ${username}!`;
-        document.getElementById('userSection').classList.add('hidden');
-        document.getElementById('modeSection').classList.remove('hidden');
+        Game.saveProgress();
+        Game.updateUserGreeting();
     }
 };
 
