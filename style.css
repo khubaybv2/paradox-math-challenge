@@ -1,0 +1,136 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Kalpurush', Arial, sans-serif;
+    background: #2c3e50;
+    color: #ecf0f1;
+    line-height: 1.6;
+}
+
+header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.logo {
+    max-width: 200px;
+    height: auto;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Level Selection */
+.level-select {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.easy { background: #27ae60; }
+.standard { background: #f1c40f; color: #2c3e50; }
+.hard { background: #e74c3c; }
+
+/* Game Panel */
+#gamePanel {
+    background: #34495e;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.timer-box, .score-box {
+    background: #2c3e50;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.question-box {
+    font-size: 2.5em;
+    margin: 30px 0;
+    padding: 20px;
+    background: #2c3e50;
+    border-radius: 8px;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 15px;
+    font-size: 1.2em;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    background: #ecf0f1;
+    color: #2c3e50;
+}
+
+.submit-btn {
+    background: #3498db;
+    font-size: 1.2em;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #34495e;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .level-select {
+        flex-direction: column;
+    }
+    
+    .question-box {
+        font-size: 1.8em;
+    }
+}
