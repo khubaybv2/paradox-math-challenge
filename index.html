@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্যারাডক্স গণিত চ্যালেঞ্জ ⚡</title>
+    <link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdsGdDUKlKShMX0pVo7oTEXXSquMnSDRmDVmsrEZDCcVB-5Gz5thINVic56m6TwvD4gF131qiECBezR4kECtlMbYa_2blO0yqT0NxPUQrAy_0aq7hmCHs5H3wr1rFnZYBk594QfEppnocFsjQ2UyCf6CxObvTpPzDk1WhuVADn9-9DLZBmNqyrBwsqsPg/s16000/for%20website.png" 
+             alt="প্যারাডক্স লোগো" class="logo">
+    </header>
+
+    <div class="container">
+        <!-- Level Selection -->
+        <div class="level-select">
+            <button class="btn easy" onclick="startGame('easy')">সহজ</button>
+            <button class="btn standard" onclick="startGame('standard')">মাধ্যমিক</button>
+            <button class="btn hard" onclick="startGame('hard')">কঠিন</button>
+        </div>
+
+        <!-- Game Panel -->
+        <div id="gamePanel" class="hidden">
+            <div class="stats">
+                <div class="timer-box">
+                    <span id="timer">০৫:০০</span>
+                    <span id="level">লেভেল: ১</span>
+                </div>
+                <div class="score-box">
+                    <span id="score">স্কোর: ১০০</span>
+                    <span id="lives">❤️ ❤️ ❤️</span>
+                </div>
+            </div>
+
+            <div id="question" class="question-box"></div>
+            
+            <div class="input-group">
+                <input type="text" 
+                       id="answer" 
+                       placeholder="উত্তর লিখুন (বাংলা সংখ্যা)"
+                       oninput="convertToBengali(this)">
+                <button class="btn submit-btn" onclick="checkAnswer()">জমা দিন</button>
+            </div>
+        </div>
+
+        <!-- Results Modal -->
+        <div id="resultModal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="resultTitle"></h2>
+                <div id="resultStats"></div>
+                <button class="btn next-level" onclick="nextLevel()">পরবর্তী লেভেল</button>
+                <button class="btn retry" onclick="retryLevel()">আবার চেষ্টা করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>⚡ by <a href="https://www.khubaybhossain.com">Khubayb Hossain</a></p>
+    </footer>
+
+    <script src="game.js"></script>
+</body>
+</html>
